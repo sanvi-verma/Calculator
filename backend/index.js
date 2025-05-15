@@ -138,9 +138,10 @@ app.post('/api/square', (req, res) => {
 
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
 });
+
 
 // Only start the server if not in test environment
 if (process.env.NODE_ENV !== 'test') {
