@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/anshsehgal13/Calculator.git', branch: 'main'
+                git url: 'https://github.com/sanvi-verma/Calculator.git', branch: 'main'
             }
         }
 
