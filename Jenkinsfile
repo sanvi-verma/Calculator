@@ -53,7 +53,6 @@ pipeline {
                             -Dsonar.exclusions=node_modules/,test/** \
                             -Dsonar.tests=test \
                             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                            -Dsonar.testExecutionReportPaths=test-report.xml \
                             -Dsonar.host.url=http://host.docker.internal:9000 \
                             -Dsonar.token=$SONAR_TOKEN
                         """
