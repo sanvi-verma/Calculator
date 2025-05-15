@@ -5,7 +5,7 @@ pipeline {
         SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
         SONAR_PROJECT_KEY = 'node-api'
         WEBHOOK_URL = 'https://d12a-192-245-162-37.ngrok-free.app'
-        RENDER_DEPLOY_HOOK_URL = credentials('https://api.render.com/deploy/srv-d0isc6a4d50c73du65cg?key=zBxA6yRaOJA')
+        RENDER_DEPLOY_HOOK_URL = credentials('render-deploy-url')
     }
 
     stages {
