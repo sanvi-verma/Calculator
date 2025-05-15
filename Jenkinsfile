@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
-        SONAR_PROJECT_KEY = 'node-api'
+        SONAR_PROJECT_KEY = 'calculator-api'
         WEBHOOK_URL = 'https://d12a-192-245-162-37.ngrok-free.app'
         RENDER_DEPLOY_HOOK_URL = credentials('render-deploy-url')
     }
@@ -48,7 +48,7 @@ pipeline {
                     withSonarQubeEnv('My SonarQube Server') {
                         sh """
                            npx sonar-scanner \
-                            -Dsonar.projectKey=node-api \
+                            -Dsonar.projectKey=calculator-api \
                             -Dsonar.sources=./ \
                             -Dsonar.exclusions=node_modules/,test/** \
                             -Dsonar.tests=test \
