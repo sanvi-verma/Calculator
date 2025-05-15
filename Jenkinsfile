@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
         SONAR_PROJECT_KEY = 'calculator-api'
-        WEBHOOK_URL = 'https://d12a-192-245-162-37.ngrok-free.app'
+        WEBHOOK_URL = 'https://234c-192-245-162-37.ngrok-free.app'
         RENDER_DEPLOY_HOOK_URL = credentials('render-deploy-url')
     }
 
