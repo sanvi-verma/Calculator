@@ -4,6 +4,7 @@ pipeline {
     environment {
         SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
         SONAR_PROJECT_KEY = 'calculator-api'
+            WEBHOOK_URL = 'https://d12a-192-245-162-37.ngrok-free.app'
         RENDER_DEPLOY_HOOK_URL = credentials('render-deploy-url')
     }
 
@@ -46,15 +47,15 @@ pipeline {
                 dir('backend') {
                     withSonarQubeEnv('My SonarQube Server') {
                         sh """
-                           npx sonar-scanner \
-                            -Dsonar.projectKey=calculator-api \
-                            -Dsonar.sources=./ \
-                            -Dsonar.exclusions=node_modules/,test/** \
-                            -Dsonar.tests=test \
-                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                            -Dsonar.host.url=http://host.docker.internal:9000 \
-                            -Dsonar.token=$SONAR_TOKEN
-                        """
+npx sonar-scanner \
+  -Dsonar.projectKey=calculator-api \
+  -Dsonar.sources=. \
+  -Dsonar.exclusions=node_modules/ \
+  -Dsonar.tests=test \
+  -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+  -Dsonar.host.url=http://host.docker.internal:9000 \
+  -Dsonar.token=$SONAR_TOKEN
+"""
                     }
                 }
             }
@@ -72,55 +73,51 @@ pipeline {
     }
 
    post {
-    always {
-        script {
-            withCredentials([
-                string(credentialsId: 'jenkins-username', variable: 'JENKINS_USERNAME'),
-                string(credentialsId: 'api-token', variable: 'API_TOKEN'),
-                string(credentialsId: 'secret-key', variable: 'SECRET_KEY'),
-                string(credentialsId: 'iv-key', variable: 'IV_KEY')
-            ]) {
-                
-                def WEBHOOK_URL = 'https://5956-192-245-162-37.ngrok-free.app/'
-                def getRawJson = { url ->
-                    sh(script: "curl -s -u '$JENKINS_USERNAME:$API_TOKEN' '${url}'", returnStdout: true).trim()
+        always {
+            script {
+                withCredentials([
+                    string(credentialsId: 'jenkins-username', variable: 'JENKINS_USERNAME'),
+                    string(credentialsId: 'api-token', variable: 'API_TOKEN'),
+                    string(credentialsId: 'secret-key', variable: 'SECRET_KEY'),
+                    string(credentialsId: 'iv-key', variable: 'IV_KEY')
+                ]) {
+                    def getRawJson = { url ->
+                        sh(script: "curl -s -u '$JENKINS_USERNAME:$API_TOKEN' '${url}'", returnStdout: true).trim()
+                    }
+
+                    def buildData = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/api/json")
+                    def stageDescribe = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/wfapi/describe")
+
+                    writeFile file: 'stageDescribe.json', text: stageDescribe
+                    def parsedDescribe = readJSON file: 'stageDescribe.json'
+
+                    def nodeStageDataStr = parsedDescribe.stages.collect { stage ->
+                        def nodeId = stage.id
+                        def nodeData = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/execution/node/${nodeId}/wfapi/describe")
+                        return """{"nodeId":${groovy.json.JsonOutput.toJson(nodeId)},"data":${nodeData}}"""
+                    }.join(',')
+
+                    def payloadStr = """{"build_data": ${buildData}, "node_stage_data": [${nodeStageDataStr}]}"""
+                    writeFile file: 'payload.json', text: payloadStr
+
+                    def checksum = sh(script: "sha256sum payload.json | awk '{print \$1}'", returnStdout: true).trim()
+
+                    def timestamp = System.currentTimeMillis().toString()
+                    def encryptedTimestamp = sh(script: """
+                        echo -n '${timestamp}' | openssl enc -aes-256-cbc -base64 \\
+                        -K ${SECRET_KEY} \\
+                        -iv ${IV_KEY}
+                    """, returnStdout: true).trim()
+
+                    sh """
+                        curl -X POST '${WEBHOOK_URL}' \\
+                        -H "Content-Type: application/json" \\
+                        -H "X-Encrypted-Timestamp: ${encryptedTimestamp}" \\
+                        -H "X-Checksum: ${checksum}" \\
+                        --data-binary @payload.json
+                    """
                 }
-
-                def buildData = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/api/json")
-                def stageDescribe = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/wfapi/describe")
-
-                // ✅ Parse JSON with readJSON
-                writeFile file: 'stageDescribe.json', text: stageDescribe
-                def parsedDescribe = readJSON file: 'stageDescribe.json'
-
-                def nodeStageDataStr = parsedDescribe.stages.collect { stage ->
-                    def nodeId = stage.id
-                    def nodeData = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/execution/node/${nodeId}/wfapi/describe")
-                    return """{"nodeId":${groovy.json.JsonOutput.toJson(nodeId)},"data":${nodeData}}"""
-                }.join(',')
-
-                def payloadStr = """{"build_data": ${buildData}, "node_stage_data": [${nodeStageDataStr}]}"""
-                writeFile file: 'payload.json', text: payloadStr
-
-                def checksum = sh(script: "sha256sum payload.json | awk '{print \$1}'", returnStdout: true).trim()
-
-                def timestamp = System.currentTimeMillis().toString()
-                def encryptedTimestamp = sh(script: """
-                    echo -n '${timestamp}' | openssl enc -aes-256-cbc -base64 \\
-                    -K \$(echo -n '${SECRET_KEY}' | xxd -p | tr -d '\\n') \\
-                    -iv \$(echo -n '${IV_KEY}' | xxd -p | tr -d '\\n')
-                """, returnStdout: true).trim()
-            
-                sh """
-                    curl -X POST '${WEBHOOK_URL}' \\
-                    -H "Content-Type: application/json" \\
-                    -H "X-Encrypted-Timestamp: ${encryptedTimestamp}" \\
-                    -H "X-Checksum: ${checksum}" \\
-                    --data-binary @payload.json
-                """
             }
         }
     }
 }
-    }
-
