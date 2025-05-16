@@ -26,7 +26,7 @@ pipeline {
         stage('Run Backend Tests') {
             steps {
                 dir('backend') {
-                    sh 'npm test'  // Runs Jest tests via package.json script
+                    sh 'npm test -- --coverage --coverageDirectory=.tmp-coverage'  // Runs Jest tests via package.json script
                 }
             }
         }
