@@ -40,26 +40,27 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            environment {
-                SONAR_TOKEN = credentials('sonar-token')
-            }
-            steps {
-                dir('backend') {
-                    withSonarQubeEnv('My SonarQube Server') {
-                        sh """
+    environment {
+        SONAR_TOKEN = credentials('sonar-token')
+    }
+    steps {
+        dir('backend') {
+            withSonarQubeEnv('My SonarQube Server') {
+                sh """
 npx sonar-scanner \
   -Dsonar.projectKey=calculator-api \
   -Dsonar.sources=. \
-  -Dsonar.exclusions=node_modules/ \
+  -Dsonar.exclusions=node_modules/**,test/** \
   -Dsonar.tests=test \
+  -Dsonar.test.inclusions=test/**/*.js \
   -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
   -Dsonar.host.url=http://host.docker.internal:9000 \
   -Dsonar.token=$SONAR_TOKEN
 """
-                    }
-                }
             }
         }
+    }
+}
 
         stage('Deploy') {
             steps {
