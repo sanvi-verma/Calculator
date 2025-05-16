@@ -50,7 +50,7 @@ pipeline {
 npx sonar-scanner \
   -Dsonar.projectKey=calculator-api \
   -Dsonar.sources=. \
-  -Dsonar.exclusions=node_modules/**,test/** \
+  -Dsonar.exclusions=node_modules/**,coverage/lcov-report/**,test/** \
   -Dsonar.tests=test \
   -Dsonar.test.inclusions=test/**/*.js \
   -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
