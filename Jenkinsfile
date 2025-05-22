@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
         SONAR_PROJECT_KEY = 'calculator-api'
-            WEBHOOK_URL = 'https://d12a-192-245-162-37.ngrok-free.app'
+        WEBHOOK_URL = 'https://d12a-192-245-162-37.ngrok-free.app'
         RENDER_DEPLOY_HOOK_URL = credentials('render-deploy-url')
     }
 
@@ -40,27 +40,27 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-    environment {
-        SONAR_TOKEN = credentials('sonar-token')
-    }
-    steps {
-        dir('backend') {
-            withSonarQubeEnv('My SonarQube Server') {
-                sh """
-npx sonar-scanner \
-  -Dsonar.projectKey=calculator-api \
-  -Dsonar.sources=. \
-  -Dsonar.exclusions=node_modules/**,coverage/lcov-report/**,test/** \
-  -Dsonar.tests=test \
-  -Dsonar.test.inclusions=test/**/*.js \
-  -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-  -Dsonar.host.url=http://host.docker.internal:9000 \
-  -Dsonar.token=$SONAR_TOKEN
-"""
-            }
-        }
-    }
-}
+           environment {
+              SONAR_TOKEN = credentials('sonar-token')
+       }
+       steps {
+          dir('backend') {
+               withSonarQubeEnv('My SonarQube Server') {
+                   sh """
+                   npx sonar-scanner \
+                   -Dsonar.projectKey=calculator-api \
+                   -Dsonar.sources=. \
+                   -Dsonar.exclusions=node_modules/**,coverage/lcov-report/**,test/** \
+                   -Dsonar.tests=test \
+                   -Dsonar.test.inclusions=test/**/*.js \
+                   -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                   -Dsonar.host.url=http://host.docker.internal:9000 \
+                   -Dsonar.token=$SONAR_TOKEN
+                   """
+              }
+          }
+      }
+  }
 
         stage('Deploy') {
             steps {
