@@ -105,7 +105,8 @@ withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')])
 
                 
                 // ✅ Parse JSON with readJSON
-                def parsedDescribe = readJSON text: stageDescribe
+                writeFile file: 'stageDescribe.json', text:stageDescribe
+                def parsedDescribe = readJSON file: 'stageDescribe.json'
 
                 def nodeStageDataStr = parsedDescribe.stages.collect { stage ->
                     def nodeId = stage.id
