@@ -98,10 +98,11 @@ withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')])
                 def stageDescribe = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/wfapi/describe")
                 def testResult = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/testReport/api/json")
                 
-                def sonarqubeResult = sh(
-                    sh 'curl -s -u $SONAR_TOKEN: http://host.docker.internal:9000/api/measures/component?component=calculator-backend&metricKeys=coverage',
-                    returnStdout: true
-                ).trim()
+               def sonarqubeResult = sh(
+    script: 'curl -s -u $SONAR_TOKEN: http://host.docker.internal:9000/api/measures/component?component=calculator-backend&metricKeys=coverage',
+    returnStdout: true
+).trim()
+
                 
                 // ✅ Parse JSON with readJSON
                 writeFile file: 'stageDescribe.json', text: stageDescribe
