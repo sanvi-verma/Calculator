@@ -1,5 +1,9 @@
 pipeline {
     agent any
+     environment {
+        RENDER_DEPLOY_HOOK_URL = credentials('render-deploy-url')
+    }
+
     tools{
         jdk 'jdk' //use the same name as set in jenkins JDK configuration
     }
