@@ -8,8 +8,17 @@ export default {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageReporters: ['lcov', 'text'],
+  reporters: [
+    'default',
+    [
+      'jest-junit',
+      {
+        outputDirectory: './reports',
+        outputName: 'junit.xml'
+      }
+    ]
+  ]
 };

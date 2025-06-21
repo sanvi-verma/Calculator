@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="22" failures="0" errors="0" time="1.747">
+  <testsuite name="Calculator API Tests" errors="0" failures="0" skipped="0" timestamp="2025-06-21T17:58:34" time="1.567" tests="22">
+    <testcase classname="Calculator API Tests Add should add two numbers correctly" name="Calculator API Tests Add should add two numbers correctly" time="0.08">
+    </testcase>
+    <testcase classname="Calculator API Tests Add should handle negative numbers" name="Calculator API Tests Add should handle negative numbers" time="0.008">
+    </testcase>
+    <testcase classname="Calculator API Tests Subtract should subtract two numbers correctly" name="Calculator API Tests Subtract should subtract two numbers correctly" time="0.005">
+    </testcase>
+    <testcase classname="Calculator API Tests Subtract should handle negative numbers" name="Calculator API Tests Subtract should handle negative numbers" time="0.005">
+    </testcase>
+    <testcase classname="Calculator API Tests Multiply should multiply two numbers correctly" name="Calculator API Tests Multiply should multiply two numbers correctly" time="0.005">
+    </testcase>
+    <testcase classname="Calculator API Tests Multiply should handle multiplication with zero" name="Calculator API Tests Multiply should handle multiplication with zero" time="0.007">
+    </testcase>
+    <testcase classname="Calculator API Tests Divide should divide two numbers correctly" name="Calculator API Tests Divide should divide two numbers correctly" time="0.009">
+    </testcase>
+    <testcase classname="Calculator API Tests Divide should handle division by zero" name="Calculator API Tests Divide should handle division by zero" time="0.005">
+    </testcase>
+    <testcase classname="Calculator API Tests Modulus should calculate modulus correctly" name="Calculator API Tests Modulus should calculate modulus correctly" time="0.008">
+    </testcase>
+    <testcase classname="Calculator API Tests Modulus should handle modulus with zero divisor" name="Calculator API Tests Modulus should handle modulus with zero divisor" time="0.005">
+    </testcase>
+    <testcase classname="Calculator API Tests Power should calculate power correctly" name="Calculator API Tests Power should calculate power correctly" time="0.007">
+    </testcase>
+    <testcase classname="Calculator API Tests Power should handle power of zero" name="Calculator API Tests Power should handle power of zero" time="0.004">
+    </testcase>
+    <testcase classname="Calculator API Tests Square Root should calculate square root correctly" name="Calculator API Tests Square Root should calculate square root correctly" time="0.003">
+    </testcase>
+    <testcase classname="Calculator API Tests Square Root should handle square root of zero" name="Calculator API Tests Square Root should handle square root of zero" time="0.008">
+    </testcase>
+    <testcase classname="Calculator API Tests Square Root should handle negative square root" name="Calculator API Tests Square Root should handle negative square root" time="0.005">
+    </testcase>
+    <testcase classname="Calculator API Tests Absolute should calculate absolute value correctly" name="Calculator API Tests Absolute should calculate absolute value correctly" time="0.005">
+    </testcase>
+    <testcase classname="Calculator API Tests Absolute should handle absolute value of positive number" name="Calculator API Tests Absolute should handle absolute value of positive number" time="0.007">
+    </testcase>
+    <testcase classname="Calculator API Tests Factorial should calculate factorial correctly" name="Calculator API Tests Factorial should calculate factorial correctly" time="0.004">
+    </testcase>
+    <testcase classname="Calculator API Tests Factorial should handle factorial of 0" name="Calculator API Tests Factorial should handle factorial of 0" time="0.007">
+    </testcase>
+    <testcase classname="Calculator API Tests Factorial should throw error for negative input" name="Calculator API Tests Factorial should throw error for negative input" time="0.005">
+    </testcase>
+    <testcase classname="Calculator API Tests Square should calculate square correctly" name="Calculator API Tests Square should calculate square correctly" time="0.004">
+    </testcase>
+    <testcase classname="Calculator API Tests Square should calculate square of negative number correctly" name="Calculator API Tests Square should calculate square of negative number correctly" time="0.007">
+    </testcase>
+  </testsuite>
+</testsuites>
