@@ -55,7 +55,7 @@ withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')])
           $SONARQUBE_SCANNER_HOME/bin/sonar-scanner \
           -Dsonar.projectKey=calculator-backend \
           -Dsonar.sources=. \
-          -Dsonar.host.url=http://localhost:9000 \
+          -Dsonar.host.url=http://sonarqube:9000 \
           -Dsonar.login=$SONAR_TOKEN \
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 """
