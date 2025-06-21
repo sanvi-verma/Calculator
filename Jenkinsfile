@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools{
-        jdk 'jdk'
+        jdk 'jdk' //use the same name as set in jenkins JDK configuration
     }
 
     stages {
