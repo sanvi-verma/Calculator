@@ -102,7 +102,7 @@ withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')])
     script: 'curl -s -u $SONAR_TOKEN: http://host.docker.internal:9000/api/measures/component?component=calculator-backend&metricKeys=coverage',
     returnStdout: true
 ).trim()
-
+echo "SonarQube Result: ${sonarqubeResult}"
                 
                 // ✅ Parse JSON with readJSON
                 writeFile file: 'stageDescribe.json', text:stageDescribe
