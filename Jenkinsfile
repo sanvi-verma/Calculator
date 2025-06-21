@@ -83,7 +83,8 @@ pipeline {
                 string(credentialsId: 'iv-key', variable: 'IV_KEY'),
                 string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')
             ]) {
-                
+
+                def WEBHOOK_URL = ''
                 def getRawJson = { url ->
                     sh(script: "curl -s -u '$JENKINS_USERNAME:$API_TOKEN' '${url}'", returnStdout: true).trim()
                 }
