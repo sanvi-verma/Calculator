@@ -49,7 +49,7 @@ environment{
     SONARQUBE_SERVER = 'SonarQubeScanner'
 }
 steps{
-withCredentials([string(credentialsId: 'sonarqube token', variable: 'SONAR_TOKEN')]){
+withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]){
     dir('backend'){
         sh"""
           $SONARQUBE_SCANNER_HOME/bin/sonar-scanner \
