@@ -122,10 +122,11 @@ pipeline {
 
                 def timestamp = System.currentTimeMillis().toString()
                 def encryptedTimestamp = sh(script: """
-                    echo -n '${timestamp}' | openssl enc -aes-256-cbc -base64 \\
-                    -K \$(echo -n '${SECRET_KEY}' | xxd -p | tr -d '\\n') \\
-                    -iv \$(echo -n '${IV_KEY}' | xxd -p | tr -d '\\n')
-                """, returnStdout: true).trim()
+    echo -n '${timestamp}' | openssl enc -aes-256-cbc -base64 \\
+    -K \$(echo -n '${SECRET_KEY}' | hexdump -v -e '/1 "%02x"' | tr -d '\\n') \\
+    -iv \$(echo -n '${IV_KEY}' | hexdump -v -e '/1 "%02x"' | tr -d '\\n')
+""", returnStdout: true).trim()
+
             
                 sh """
                     curl -X POST '${WEBHOOK_URL}' \\
