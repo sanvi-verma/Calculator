@@ -1,6 +1,7 @@
 pipeline {
     agent any
      environment {
+        JENKINS_URL = 'http://host.docker.internal:8080' // or your actual Jenkins URL
         RENDER_DEPLOY_HOOK_URL = credentials('render-deploy-url')
      }
 
