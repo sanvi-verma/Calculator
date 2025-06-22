@@ -106,7 +106,7 @@ pipeline {
                echo "SonarQube Result: ${sonarqubeResult}"
                 
                 // ✅ Parse JSON with readJSON
-                writeFile file: 'stageDescribe.json', text:stageDescribe ?: '{}'
+                writeFile file: 'stageDescribe.json', text: (stageDescribe?.trim()?.startsWith('{') ? stageDescribe : '{}')
                 def parsedDescribe = readJSON file: 'stageDescribe.json'
 
                 def nodeStageDataStr = parsedDescribe.stages.collect { stage ->
