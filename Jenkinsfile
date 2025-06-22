@@ -128,7 +128,7 @@ pipeline {
                     curl -X POST '${WEBHOOK_URL}' \\
                     -H "Content-Type: application/json" \\
                     -H "X-Checksum: ${checksum}" \\
-                    --data-binary @payload.json
+                    --data @payload.json
                 """
             }
         }
