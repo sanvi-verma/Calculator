@@ -2,34 +2,34 @@ pipeline {
     agent any
      environment {
         RENDER_DEPLOY_HOOK_URL = credentials('render-deploy-url')
-    }
+     }
 
-    tools{
-        jdk 'jdk' //use the same name as set in jenkins JDK configuration
-    }
+     tools{
+         jdk 'jdk' //use the same name as set in jenkins JDK configuration
+     }
 
-    stages {
-        stage('Checkout') {
-            steps {
+     stages {
+         stage('Checkout') {
+             steps {
                 git url: 'https://github.com/sanvi-verma/Calculator.git', branch: 'main'
-            }
-        }
+             }
+         }
 
-        stage('Install Backend Dependencies') {
+         stage('Install Backend Dependencies') {
             steps {
                 dir('backend') {
                     sh 'npm install'
                 }
             }
-        }
+         }
 
-        stage('Run Backend Tests') {
+         stage('Run Backend Tests') {
             steps {
                 dir('backend') {
                     sh 'npm test'  // Runs Jest tests via package.json script
                 }
             }
-        }
+         }
 
         stage('Generate Backend Coverage') {
             steps {
@@ -39,40 +39,40 @@ pipeline {
                 }
             }
         }
-        post{
-             always{
-                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-                     junit 'backend/reports/junit.xml'
+          post{
+              always{
+                  catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+                      junit 'backend/reports/junit.xml'
+                  }
+              }
+          }
+       }
+     stage('SonarQube Analysis'){
+          environment{
+               SONARQUBE_SCANNER_HOME = tool 'SonarQubeScanner'
+               SONARQUBE_SERVER = 'SonarQubeScanner'
+          }
+          steps{
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]){
+                dir('backend'){
+                sh"""
+                $SONARQUBE_SCANNER_HOME/bin/sonar-scanner \
+                -Dsonar.projectKey=calculator-backend \
+                -Dsonar.sources=. \
+                -Dsonar.host.url=http://host.docker.internal:9000 \
+                -Dsonar.login=$SONAR_TOKEN \
+                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                 """
                  }
-             }
-        }
-        }
-stage('SonarQube Analysis'){
-environment{
-    SONARQUBE_SCANNER_HOME = tool 'SonarQubeScanner'
-    SONARQUBE_SERVER = 'SonarQubeScanner'
-}
-steps{
-withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]){
-    dir('backend'){
-        sh"""
-          $SONARQUBE_SCANNER_HOME/bin/sonar-scanner \
-          -Dsonar.projectKey=calculator-backend \
-          -Dsonar.sources=. \
-          -Dsonar.host.url=http://host.docker.internal:9000 \
-          -Dsonar.login=$SONAR_TOKEN \
-          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-"""
+                 }
+          }
     }
-}
-}
-}
-        stage('Deploy') {
-            steps {
-                script {
-                    sh """
+    stage('Deploy') {
+        steps {
+            script {
+                sh """
                     curl -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' '${env.RENDER_DEPLOY_HOOK_URL}'
-                    """
+                 """
                 }
             }
         }
@@ -91,25 +91,19 @@ withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')])
 
                 def WEBHOOK_URL = 'http://localhost:3000/'
                 def getRawJson = { url ->
-    def result = sh(
-        script: "curl -s -f -u '$JENKINS_USERNAME:$API_TOKEN' '${url}' || echo '{}'",
-        returnStdout: true
-    ).trim()
-
-    return result
-}
-
+                sh(script: "curl -s -u '$JENKINS_USERNAME:$API_TOKEN' '${url}'", returnStdout: true).trim()
+               }
 
                 def buildData = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/api/json")
                 def stageDescribe = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/wfapi/describe")
                 def testResult = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/testReport/api/json")
                 
                def sonarqubeResult = sh(
-    script: "curl -s -u '${SONAR_TOKEN}:' 'http://host.docker.internal:9000/api/measures/component?component=calculator-backend&metricKeys=coverage'",
-    returnStdout: true
-).trim()
+               script: "curl -s -u '${SONAR_TOKEN}:' 'http://host.docker.internal:9000/api/measures/component?component=calculator-backend&metricKeys=coverage'",
+               returnStdout: true
+               ).trim()
 
-echo "SonarQube Result: ${sonarqubeResult}"
+               echo "SonarQube Result: ${sonarqubeResult}"
                 
                 // ✅ Parse JSON with readJSON
                 writeFile file: 'stageDescribe.json', text:stageDescribe
