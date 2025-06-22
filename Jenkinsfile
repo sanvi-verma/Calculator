@@ -91,8 +91,14 @@ withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')])
 
                 def WEBHOOK_URL = 'http://localhost:3000/'
                 def getRawJson = { url ->
-                    sh(script: "curl -s -u '$JENKINS_USERNAME:$API_TOKEN' '${url}'", returnStdout: true).trim()
-                }
+    def result = sh(
+        script: "curl -s -f -u '$JENKINS_USERNAME:$API_TOKEN' '${url}' || echo '{}'",
+        returnStdout: true
+    ).trim()
+
+    return result
+}
+
 
                 def buildData = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/api/json")
                 def stageDescribe = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/wfapi/describe")
