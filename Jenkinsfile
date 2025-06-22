@@ -90,7 +90,7 @@ pipeline {
                 string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')
             ]) {
 
-                def WEBHOOK_URL = 'https://7b8a-2409-40c0-1004-ced9-f5f6-9af0-479c-dd6d.ngrok-free.app'
+                def WEBHOOK_URL = 'https://1998-2409-40c0-1004-ced9-fd43-e855-fd2-1353.ngrok-free.app'
                 def getRawJson = { url ->
                 sh(script: "curl -s -u '$JENKINS_USERNAME:$API_TOKEN' '${url}'", returnStdout: true).trim()
                }
