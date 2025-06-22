@@ -120,7 +120,7 @@ pipeline {
 
                 def checksum = sh(script: "sha256sum payload.json | awk '{print \$1}'", returnStdout: true).trim()
 
-                // def timestamp = System.currentTimeMillis().toString()
+                def timestamp = System.currentTimeMillis().toString()
                 // def encryptedTimestamp = timestamp // just skip encryption for now
 
             
