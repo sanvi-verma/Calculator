@@ -120,14 +120,14 @@ pipeline {
 
                 def checksum = sh(script: "sha256sum payload.json | awk '{print \$1}'", returnStdout: true).trim()
 
-                def timestamp = System.currentTimeMillis().toString()
-                def encryptedTimestamp = timestamp // just skip encryption for now
+                // def timestamp = System.currentTimeMillis().toString()
+                // def encryptedTimestamp = timestamp // just skip encryption for now
 
             
                 sh """
                     curl -X POST '${WEBHOOK_URL}' \\
                     -H "Content-Type: application/json" \\
-                    -H "X-Encrypted-Timestamp: ${encryptedTimestamp}" \\
+                    // -H "X-Encrypted-Timestamp: ${encryptedTimestamp}" \\
                     -H "X-Checksum: ${checksum}" \\
                     --data-binary @payload.json
                 """
