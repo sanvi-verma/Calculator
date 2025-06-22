@@ -99,9 +99,10 @@ withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')])
                 def testResult = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/testReport/api/json")
                 
                def sonarqubeResult = sh(
-    script: """curl -s -u $SONAR_TOKEN: http://host.docker.internal:9000/api/measures/component?component=calculator-backend&metricKeys=coverage""",
+    script: "curl -s -u '${SONAR_TOKEN}:' 'http://host.docker.internal:9000/api/measures/component?component=calculator-backend&metricKeys=coverage'",
     returnStdout: true
 ).trim()
+
 echo "SonarQube Result: ${sonarqubeResult}"
                 
                 // ✅ Parse JSON with readJSON
