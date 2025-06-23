@@ -100,9 +100,13 @@ pipeline {
                 def testResult = getRawJson("${env.JENKINS_URL}/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/testReport/api/json")
                 
                def sonarqubeResult = sh(
-               script: "curl -s -u '${SONAR_TOKEN}:' 'http://host.docker.internal:9000/api/measures/component?component=calculator-backend&metricKeys=coverage'",
-               returnStdout: true
-               ).trim()
+  script: """
+    curl -s -u '${SONAR_TOKEN}:' \\
+    'http://host.docker.internal:9000/api/measures/component?component=calculator-backend&metricKeys=coverage,bugs,vulnerabilities,code_smells,sqale_index,duplicated_lines_density,ncloc,functions,files,complexity,comment_lines_density,security_hotspots'
+  """,
+  returnStdout: true
+).trim()
+
 
                echo "SonarQube Result: ${sonarqubeResult}"
                 
